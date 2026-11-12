@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastrar fornecedor | IC Agrícola</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='dashboard.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='cadastrar_fornecedor.css') }}">
+</head>
+
+<body>
+
+    <!-- BOTÃO DO MENU MOBILE -->
+    <button class="botao-menu" id="botaoMenu" type="button">
+        ☰
+    </button>
+
+    <!-- MENU LATERAL -->
+    <aside class="menu-lateral" id="menuLateral">
+
+        <div class="logo-menu">
+            <img src="{{ url_for('static', filename='ICBRANCO.png') }}"
+                 alt="Logo IC Agrícola">
+            <h2>IC Agrícola</h2>
+        </div>
+
+        <nav class="links-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="link-menu">
+                <span>▣</span>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('produtos') }}" class="link-menu">
+                <span>▤</span>
+                Produtos
+            </a>
+
+            <a href="{{ url_for('categorias') }}" class="link-menu">
+                <span>▥</span>
+                Categorias
+            </a>
+
+            <a href="{{ url_for('entrada') }}" class="link-menu">
+                <span>↙</span>
+                Entrada
+            </a>
+
+            <a href="{{ url_for('saida') }}" class="link-menu">
+                <span>↗</span>
+                Saída
+            </a>
+
+            <a href="{{ url_for('movimentacao') }}" class="link-menu">
+                <span>↔</span>
+                Movimentações
+            </a>
+
+            <a href="{{ url_for('notificacoes') }}" class="link-menu">
+                <span>♧</span>
+                Notificações
+            </a>
+
+            <a href="{{ url_for('fornecedores') }}"
+               class="link-menu ativo">
+                <span>▧</span>
+                Fornecedores
+            </a>
+
+        </nav>
+
+        <!-- PERFIL -->
+        <div class="perfil-menu">
+
+            <button class="botao-perfil" id="botaoPerfil" type="button">
+
+                <div class="avatar-perfil">
+                    {{ (session.get('usuario') or 'U')[0]|upper }}
+                </div>
+
+                <div class="dados-perfil">
+                    <strong>{{ session.get('usuario', 'Usuário') }}</strong>
+                    <small>Meu perfil</small>
+                </div>
+
+                <span class="seta-perfil">⌃</span>
+
+            </button>
+
+            <div class="opcoes-perfil" id="opcoesPerfil">
+
+                <a href="{{ url_for('perfil') }}" class="opcao-perfil">
+                    <span>👤</span>
+                    Editar perfil
+                </a>
+
+                <a href="{{ url_for('logout') }}"
+                   class="opcao-perfil sair">
+                    <span>↪</span>
+                    Sair
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="conteudo-principal">
+
+        <div class="pagina-fornecedor">
+
+            <!-- CABEÇALHO -->
+            <header class="cabecalho-formulario">
+
+                <a href="{{ url_for('fornecedores') }}"
+                   class="voltar-fornecedor">
+                    ← Voltar para fornecedores
+                </a>
+
+                <h1>Cadastrar fornecedor</h1>
+
+                <p>
+                    Preencha os dados para adicionar um novo fornecedor
+                    ao seu estoque.
+                </p>
+
+            </header>
+
+
+            <!-- MENSAGENS -->
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% if mensagens %}
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="mensagem mensagem-{{ categoria }}">
+                            {{ mensagem }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+
+            <!-- FORMULÁRIO -->
+            <form method="POST" class="formulario-fornecedor">
+
+                <!-- DADOS DO FORNECEDOR -->
+                <section class="secao-formulario">
+
+                    <div class="titulo-secao-formulario">
+
+                        <div class="icone-secao">
+                            ♙
+                        </div>
+
+                        <div>
+                            <h2>Informações do fornecedor</h2>
+                            <p>Informe os dados principais do fornecedor.</p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="grade-campos-fornecedor">
+
+                        <div class="campo-fornecedor campo-largo">
+                            <label for="nome">
+                                Nome do fornecedor
+                                <span class="obrigatorio">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nome"
+                                name="nome"
+                                placeholder="Digite o nome do fornecedor"
+                                required>
+                        </div>
+
+
+                        <div class="campo-fornecedor">
+                            <label for="cnpj">CNPJ</label>
+
+                            <input
+                                type="text"
+                                id="cnpj"
+                                name="cnpj"
+                                placeholder="00.000.000/0000-00">
+                        </div>
+
+
+                        <div class="campo-fornecedor">
+                            <label for="responsavel">Responsável</label>
+
+                            <input
+                                type="text"
+                                id="responsavel"
+                                name="responsavel"
+                                placeholder="Nome do responsável">
+                        </div>
+
+
+                        <div class="campo-fornecedor">
+                            <label for="telefone">Telefone</label>
+
+                            <input
+                                type="text"
+                                id="telefone"
+                                name="telefone"
+                                placeholder="(00) 00000-0000">
+                        </div>
+
+
+                        <div class="campo-fornecedor">
+                            <label for="email">E-mail</label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="fornecedor@email.com">
+                        </div>
+
+
+                        <div class="campo-fornecedor campo-largo">
+                            <label for="endereco">Endereço</label>
+
+                            <input
+                                type="text"
+                                id="endereco"
+                                name="endereco"
+                                placeholder="Rua, número, bairro e cidade">
+                        </div>
+
+
+                        <div class="campo-fornecedor campo-largo">
+                            <label for="observacoes">Observações</label>
+
+                            <textarea
+                                id="observacoes"
+                                name="observacoes"
+                                placeholder="Adicione informações importantes sobre o fornecedor..."></textarea>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- PRODUTOS VINCULADOS -->
+                <section class="secao-formulario">
+
+                    <div class="titulo-secao-formulario">
+
+                        <div class="icone-secao">
+                            ▤
+                        </div>
+
+                        <div>
+                            <h2>Produtos fornecidos</h2>
+                            <p>
+                                Selecione os produtos que este fornecedor
+                                pode fornecer.
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    {% if produtos %}
+
+                        <div class="lista-produtos-fornecedor">
+
+                            {% for produto in produtos %}
+
+                                <div class="produto-fornecedor">
+
+                                    <div class="selecao-produto">
+
+                                        <input
+                                            type="checkbox"
+                                            id="produto_{{ produto.id }}"
+                                            name="produtos"
+                                            value="{{ produto.id }}"
+                                            onchange="alternarCamposProduto(this)">
+
+                                        <label for="produto_{{ produto.id }}">
+                                            {{ produto.nome }}
+                                        </label>
+
+                                    </div>
+
+
+                                    <div class="campos-produto-fornecedor">
+
+                                        <div class="campo-fornecedor">
+
+                                            <label for="preco_{{ produto.id }}">
+                                                Preço fornecido (R$)
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                id="preco_{{ produto.id }}"
+                                                name="preco_{{ produto.id }}"
+                                                min="0"
+                                                step="0.01"
+                                                placeholder="0,00"
+                                                disabled>
+
+                                        </div>
+
+
+                                        <div class="campo-fornecedor">
+
+                                            <label for="prazo_{{ produto.id }}">
+                                                Prazo de entrega (dias)
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                id="prazo_{{ produto.id }}"
+                                                name="prazo_{{ produto.id }}"
+                                                min="0"
+                                                step="1"
+                                                placeholder="Ex.: 5"
+                                                disabled>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="aviso-sem-produtos">
+
+                            <strong>Nenhum produto cadastrado.</strong>
+
+                            <p>
+                                Cadastre produtos antes de vinculá-los
+                                a um fornecedor.
+                            </p>
+
+                            <a href="{{ url_for('cadastrar_produto') }}">
+                                Cadastrar produto
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+
+                <!-- BOTÕES -->
+                <div class="botoes-formulario-fornecedor">
+
+                    <a href="{{ url_for('fornecedores') }}"
+                       class="botao-cancelar-fornecedor">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="botao-salvar-fornecedor">
+                        Salvar fornecedor
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script>
+
+        // Abrir e fechar os campos dos produtos
+        function alternarCamposProduto(checkbox) {
+
+            const produto = checkbox.closest(".produto-fornecedor");
+
+            const campos = produto.querySelectorAll(
+                ".campos-produto-fornecedor input"
+            );
+
+            campos.forEach(campo => {
+                campo.disabled = !checkbox.checked;
+
+                if (!checkbox.checked) {
+                    campo.value = "";
+                }
+            });
+
+        }
+
+
+        // Menu lateral no celular
+        const botaoMenu = document.getElementById("botaoMenu");
+        const menuLateral = document.getElementById("menuLateral");
+
+        if (botaoMenu && menuLateral) {
+            botaoMenu.addEventListener("click", function () {
+                menuLateral.classList.toggle("aberto");
+            });
+        }
+
+
+        // Menu de perfil
+        const botaoPerfil = document.getElementById("botaoPerfil");
+        const opcoesPerfil = document.getElementById("opcoesPerfil");
+
+        if (botaoPerfil && opcoesPerfil) {
+            botaoPerfil.addEventListener("click", function () {
+                opcoesPerfil.classList.toggle("aberto");
+            });
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,554 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fornecedores | IC Agrícola</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='dashboard.css') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='fornecedores.css') }}">
+</head>
+
+<body>
+
+    <!-- BOTÃO DO MENU PARA CELULAR -->
+    <button class="botao-menu" id="botaoMenu" type="button">
+        ☰
+    </button>
+
+    <!-- MENU LATERAL -->
+    <aside class="menu-lateral" id="menuLateral">
+
+        <div class="logo-menu">
+            <img src="{{ url_for('static', filename='ICBRANCO.png') }}"
+                 alt="Logo IC Agrícola">
+            <h2>IC Agrícola</h2>
+        </div>
+
+        <nav class="links-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="link-menu">
+                <span>▣</span>
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('produtos') }}" class="link-menu">
+                <span>▤</span>
+                Produtos
+            </a>
+
+            <a href="{{ url_for('categorias') }}" class="link-menu">
+                <span>▥</span>
+                Categorias
+            </a>
+
+            <a href="{{ url_for('entrada') }}" class="link-menu">
+                <span>↙</span>
+                Entrada
+            </a>
+
+            <a href="{{ url_for('saida') }}" class="link-menu">
+                <span>↗</span>
+                Saída
+            </a>
+
+            <a href="{{ url_for('movimentacao') }}" class="link-menu">
+                <span>↔</span>
+                Movimentações
+            </a>
+
+            <a href="{{ url_for('notificacoes') }}" class="link-menu">
+                <span>🕭</span>
+                Notificações
+            </a>
+
+            <a href="{{ url_for('fornecedores') }}"
+               class="link-menu ativo">
+                <span>▧</span>
+                Fornecedores
+            </a>
+
+        </nav>
+
+        <!-- PERFIL DO USUÁRIO -->
+        <div class="perfil-menu">
+
+            <button class="botao-perfil"
+                    id="botaoPerfil"
+                    type="button">
+
+                <div class="avatar-perfil">
+                    {{ (session.get('usuario') or 'U')[0]|upper }}
+                </div>
+
+                <div class="dados-perfil">
+
+                    <strong>
+                        {{ session.get('usuario', 'Usuário') }}
+                    </strong>
+
+                    <small>Meu perfil</small>
+
+                </div>
+
+                <span class="seta-perfil">⌃</span>
+
+            </button>
+
+            <div class="opcoes-perfil" id="opcoesPerfil">
+
+                <a href="{{ url_for('perfil') }}"
+                   class="opcao-perfil">
+                    <span>👤</span>
+                    Editar perfil
+                </a>
+
+                <button type="button"
+                        class="opcao-perfil"
+                        id="botaoAcessibilidade">
+                    <span>⚙</span>
+                    Acessibilidade
+                </button>
+
+                <a href="{{ url_for('logout') }}"
+                   class="opcao-perfil sair">
+                    <span>↪</span>
+                    Sair
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="conteudo-principal">
+
+        <!-- CABEÇALHO -->
+        <header class="cabecalho-pagina">
+
+            <div>
+                <span class="texto-pequeno">
+                    Gestão de cadastros
+                </span>
+
+                <h1>Fornecedores</h1>
+
+                <p class="subtitulo">
+                    Gerencie os fornecedores cadastrados no sistema.
+                </p>
+            </div>
+
+            <a href="{{ url_for('cadastrar_fornecedor') }}"
+               class="btn-adicionar">
+                + Cadastrar fornecedor
+            </a>
+
+        </header>
+
+
+        <!-- INDICADORES -->
+        <section class="indicadores-fornecedores">
+
+            <div class="card-indicador">
+
+                <div class="indicador-icone">
+                    ⛟
+                </div>
+
+                <div>
+                    <p>Total de fornecedores</p>
+                    <h2>{{ total_fornecedores|default(fornecedores|length, true) }}</h2>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="indicador-icone">
+                    ✔
+                </div>
+
+                <div>
+                    <p>Fornecedores ativos</p>
+                    <h2>{{ fornecedores_ativos|default(0, true) }}</h2>
+                </div>
+
+            </div>
+
+            <div class="card-indicador">
+
+                <div class="indicador-icone">
+                    🛒
+                </div>
+
+                <div>
+                    <p>Pedidos realizados</p>
+                    <h2>{{ total_pedidos|default(0, true) }}</h2>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LISTAGEM DE FORNECEDORES -->
+        <section class="area-fornecedores">
+
+            <div class="titulo-listagem">
+
+                <div>
+                    <h2>Lista de fornecedores</h2>
+
+                    <p>
+                        Consulte, edite ou exclua os fornecedores cadastrados.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- PESQUISA E FILTROS -->
+            <div class="filtros-fornecedores">
+
+                <div class="campo-pesquisa">
+                    <span>⌕</span>
+
+                    <input type="text"
+                           id="pesquisaFornecedor"
+                           placeholder="Pesquisar fornecedor..."
+                           autocomplete="off">
+                </div>
+
+                <select id="filtroStatus">
+                    <option value="">Todos os status</option>
+                    <option value="ativo">Ativos</option>
+                    <option value="inativo">Inativos</option>
+                </select>
+
+            </div>
+
+
+            <!-- TABELA -->
+            
+            <div class="tabela-container">
+
+                <table class="tabela-fornecedores">
+                    <thead>
+                        <tr>
+                            <th>Fornecedor</th>
+                            <th>CNPJ</th>
+                            <th>Responsável</th>
+                            <th>Telefone</th>
+                            <th>E-mail</th>
+                            <th>Produtos fornecidos</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaFornecedores">
+
+                        {% for fornecedor in fornecedores %}
+
+                        <tr class="linha-fornecedor"
+                            data-status="{{ fornecedor.status|default('ativo', true)|lower }}">
+
+                            <td>
+                                <div class="fornecedor-identificacao">
+                                    <div class="icone-fornecedor">⛟</div>
+                                    <strong>{{ fornecedor.nome }}</strong>
+                                </div>
+                            </td>
+
+                            <td>{{ fornecedor.cnpj|default('-', true) }}</td>
+
+                            <td>{{ fornecedor.responsavel|default('-', true) }}</td>
+
+                            <td>{{ fornecedor.telefone|default('-', true) }}</td>
+
+                            <td>{{ fornecedor.email|default('-', true) }}</td>
+
+                            <!-- PRODUTOS FORNECIDOS -->
+                            <td>
+                                {% if fornecedor.produtos_fornecidos %}
+                                    <span class="produtos-fornecedor">
+                                        {{ fornecedor.produtos_fornecidos }}
+                                    </span>
+                                {% else %}
+                                    <span class="sem-produtos">
+                                        Nenhum produto vinculado
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% set status = fornecedor.status|default('ativo', true)|lower %}
+
+                                <span class="status-fornecedor
+                                    {% if status == 'ativo' %}ativo
+                                    {% else %}inativo{% endif %}">
+
+                                    {{ status|capitalize }}
+
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="acoes-fornecedor">
+
+                                    <a href="{{ url_for('editar_fornecedor', id=fornecedor.id) }}"
+                                    class="acao-editar"
+                                    title="Editar fornecedor">
+                                        ✎
+                                    </a>
+
+                                    <form action="{{ url_for('excluir_fornecedor', id=fornecedor.id) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Tem certeza que deseja excluir este fornecedor?');">
+
+                                        <button type="submit"
+                                                class="acao-excluir"
+                                                title="Excluir fornecedor">
+                                            🗑
+                                        </button>
+
+                                    </form>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+
+                        <tr>
+                            <td colspan="8" class="sem-fornecedores">
+                                <div>
+                                    <span>⛟</span>
+                                    <h3>Nenhum fornecedor cadastrado</h3>
+                                    <p>Cadastre um fornecedor para começar.</p>
+
+                                    <a href="{{ url_for('cadastrar_fornecedor') }}"
+                                    class="btn-adicionar">
+                                        + Cadastrar fornecedor
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+                <p id="nenhumResultado"
+                class="sem-resultado"
+                style="display: none;">
+                    Nenhum fornecedor encontrado com os filtros selecionados.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL DE ACESSIBILIDADE -->
+    <div class="modal-acessibilidade" id="modalAcessibilidade">
+
+        <div class="conteudo-acessibilidade">
+
+            <button class="fechar-acessibilidade"
+                    id="fecharAcessibilidade"
+                    type="button">
+                ×
+            </button>
+
+            <h2>Acessibilidade</h2>
+
+            <p>
+                Personalize a visualização da página.
+            </p>
+
+            <div class="opcoes-acessibilidade">
+
+                <button type="button" id="aumentarFonte">
+                    Aumentar fonte
+                </button>
+
+                <button type="button" id="diminuirFonte">
+                    Diminuir fonte
+                </button>
+
+                <button type="button" id="alternarContraste">
+                    Alto contraste
+                </button>
+
+                <button type="button" id="destacarLinks">
+                    Destacar links
+                </button>
+
+                <button type="button" id="restaurarAcessibilidade">
+                    Restaurar configurações
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script>
+
+        // MENU LATERAL NO CELULAR
+
+        const botaoMenu = document.getElementById("botaoMenu");
+        const menuLateral = document.getElementById("menuLateral");
+
+        botaoMenu.addEventListener("click", function () {
+            menuLateral.classList.toggle("aberto");
+        });
+
+
+        // MENU DO PERFIL
+
+        const botaoPerfil = document.getElementById("botaoPerfil");
+        const opcoesPerfil = document.getElementById("opcoesPerfil");
+
+        botaoPerfil.addEventListener("click", function () {
+            opcoesPerfil.classList.toggle("aberto");
+        });
+
+
+        // MODAL DE ACESSIBILIDADE
+
+        const botaoAcessibilidade =
+            document.getElementById("botaoAcessibilidade");
+
+        const modalAcessibilidade =
+            document.getElementById("modalAcessibilidade");
+
+        const fecharAcessibilidade =
+            document.getElementById("fecharAcessibilidade");
+
+        botaoAcessibilidade.addEventListener("click", function () {
+            modalAcessibilidade.classList.add("aberto");
+            opcoesPerfil.classList.remove("aberto");
+        });
+
+        fecharAcessibilidade.addEventListener("click", function () {
+            modalAcessibilidade.classList.remove("aberto");
+        });
+
+        modalAcessibilidade.addEventListener("click", function (event) {
+            if (event.target === modalAcessibilidade) {
+                modalAcessibilidade.classList.remove("aberto");
+            }
+        });
+
+
+        // ACESSIBILIDADE
+
+        document.getElementById("aumentarFonte")
+            .addEventListener("click", function () {
+                document.body.classList.add("fonte-grande");
+            });
+
+        document.getElementById("diminuirFonte")
+            .addEventListener("click", function () {
+                document.body.classList.remove("fonte-grande");
+            });
+
+        document.getElementById("alternarContraste")
+            .addEventListener("click", function () {
+                document.body.classList.toggle("alto-contraste");
+            });
+
+        document.getElementById("destacarLinks")
+            .addEventListener("click", function () {
+                document.body.classList.toggle("links-destacados");
+            });
+
+        document.getElementById("restaurarAcessibilidade")
+            .addEventListener("click", function () {
+                document.body.classList.remove(
+                    "fonte-grande",
+                    "alto-contraste",
+                    "links-destacados"
+                );
+            });
+
+
+        // PESQUISA DE FORNECEDORES
+
+        const pesquisaFornecedor =
+            document.getElementById("pesquisaFornecedor");
+
+        const filtroStatus =
+            document.getElementById("filtroStatus");
+
+        const linhasFornecedores =
+            document.querySelectorAll(".linha-fornecedor");
+
+        const nenhumResultado =
+            document.getElementById("nenhumResultado");
+
+        function filtrarFornecedores() {
+
+            const pesquisa = pesquisaFornecedor.value.toLowerCase().trim();
+            const statusSelecionado = filtroStatus.value.toLowerCase();
+
+            let encontrados = 0;
+
+            linhasFornecedores.forEach(function (linha) {
+
+                const texto = linha.innerText.toLowerCase();
+                const status = linha.dataset.status;
+
+                const correspondePesquisa = texto.includes(pesquisa);
+
+                const correspondeStatus =
+                    statusSelecionado === "" ||
+                    status === statusSelecionado;
+
+                if (correspondePesquisa && correspondeStatus) {
+                    linha.style.display = "";
+                    encontrados++;
+                } else {
+                    linha.style.display = "none";
+                }
+
+            });
+
+            nenhumResultado.style.display =
+                encontrados === 0 && linhasFornecedores.length > 0
+                    ? "block"
+                    : "none";
+        }
+
+        pesquisaFornecedor.addEventListener(
+            "input",
+            filtrarFornecedores
+        );
+
+        filtroStatus.addEventListener(
+            "change",
+            filtrarFornecedores
+        );
+
+    </script>
+
+</body>
+</html>
